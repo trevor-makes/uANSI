@@ -1,0 +1,21 @@
+{
+  "name": "uANSI",
+  "version": "0.0.0",
+  "description": "uANSI is a minimal library for changing the color and formatting of text sent to a compatible terminal emulator (such as xterm or PuTTY) using ANSI control sequences",
+  "keywords": "Arduino, ANSI, art, graphics, curses",
+  "repository":
+  {
+    "type": "git",
+    "url": "https://github.com/trevor-makes/uANSI.git"
+  },
+  "authors":
+  [
+    {
+      "name": "Trevor Makes",
+      "email": "the.trevor.makes@gmail.com",
+      "maintainer": true
+    }
+  ],
+  "frameworks": "arduino",
+  "platforms": "atmelavr"
+}
