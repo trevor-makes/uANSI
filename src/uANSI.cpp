@@ -7,45 +7,46 @@
 
 namespace uANSI {
 
-enum class ParseState : uint8_t {
-  RESET,
-  ESCAPE, // preceding input was "\e"
-  CSI, // preceding input was "\e["
-  CR, // preceding input was "\r"
-};
+int StreamEx::peek() {
+  // Fill peek buffer if empty
+  if (peek_ == -1) {
+    peek_ = read();
+  }
+  return peek_;
+}
 
-int read_key(Stream& stream) {
-  // Remember state across calls with a static variable
-  // TODO As-is this won't work if multiple streams are used! Making Stream a
-  // template parameter could partially fix this, but Serial1, Serial2, etc as
-  // on Arduino Mega are all the same non-template HardwareSerial type.
-  // Adding newtype wrappers around each could be a bandaid for that.
-  static ParseState state = ParseState::RESET;
+int StreamEx::read() {
+  // If we peeked, consume it
+  if (peek_ != -1) {
+    int c = peek_;
+    peek_ = -1;
+    return c;
+  }
 
   for (;;) {
     // Peek input and return without blocking when none available
     // NOTE need to call stream.read() if we decide to consume the input
-    int input = stream.peek();
+    int input = stream_.peek();
     if (input == -1) {
       return -1;
     }
 
     // State machine for handling sequences of control characters
-    switch (state) {
-    case ParseState::ESCAPE:
+    switch (state_) {
+    case State::ESCAPE:
       if (input == '[') {
         // Eat CSI; loop back for next character without emitting
-        stream.read();
-        state = ParseState::CSI;
+        stream_.read();
+        state_ = State::CSI;
         continue;
       } else {
         // Otherwise, spit the escape back out as-is
-        state = ParseState::RESET;
+        state_ = State::RESET;
         return '\e';
       }
-    case ParseState::CSI:
-      stream.read();
-      state = ParseState::RESET;
+    case State::CSI:
+      stream_.read();
+      state_ = State::RESET;
       switch (input) {
       case 'A':
         return KEY_UP;
@@ -60,23 +61,23 @@ int read_key(Stream& stream) {
         // TODO handle other sequences and modifier keys; some are more than one char!
         continue;
       }
-    case ParseState::CR:
+    case State::CR:
       if (input == '\n') {
         // Discard LF following CR
-        stream.read();
+        stream_.read();
       }
-      state = ParseState::RESET;
+      state_ = State::RESET;
       continue;
-    case ParseState::RESET:
-      stream.read();
+    case State::RESET:
+      stream_.read();
       switch (input) {
       case '\e':
         // Eat escape; loop back for next character without emitting yet
-        state = ParseState::ESCAPE;
+        state_ = State::ESCAPE;
         continue;
       case '\r':
         // Transform both CR and CRLF to a single LF
-        state = ParseState::CR;
+        state_ = State::CR;
         return '\n';
       default:
         // Emit other characters as-is

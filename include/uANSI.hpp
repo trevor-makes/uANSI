@@ -3,10 +3,9 @@
 
 #pragma once
 
-#include <stdint.h>
+#include <Stream.h>
 
-// Forward declaration of Arduino's Stream class
-struct Stream;
+#include <stdint.h>
 
 namespace uANSI {
 
@@ -40,6 +39,37 @@ enum Key {
   KEY_DOWN  = 0x101,
   KEY_RIGHT = 0x102,
   KEY_LEFT  = 0x103,
+};
+
+class StreamEx : public Stream {
+  Stream& stream_;
+  int peek_ = -1;
+  enum class State : uint8_t {
+    RESET,
+    ESCAPE, // preceding input was "\e"
+    CSI, // preceding input was "\e["
+    CR, // preceding input was "\r"
+  } state_ = State::RESET;
+
+public:
+  StreamEx(Stream& stream): stream_{stream} {}
+
+  // Make type non-copyable
+  StreamEx(const StreamEx&) = delete;
+  StreamEx& operator=(const StreamEx&) = delete;
+
+  // Virtual methods from Stream
+  int peek(void) override;
+  int read(void) override;
+  int available(void) override { return peek() != -1; }
+
+  // Virtual methods from Print
+  int availableForWrite(void) override { return stream_.availableForWrite(); }
+  void flush(void) override { stream_.flush(); }
+  size_t write(uint8_t c) override { return stream_.write(c); }
+
+  // Expose non-virtual methods from Print, as done by HardwareSerial
+  using Print::write;
 };
 
 // Move the cursor to row, col
@@ -97,8 +127,5 @@ template <typename T>
 void set_background(T& stream, Color color) {
   set_style(stream, 40 + color);
 }
-
-// Read with special handling of multi-character input sequences
-int read_key(Stream& stream);
 
 } // namespace uANSI
