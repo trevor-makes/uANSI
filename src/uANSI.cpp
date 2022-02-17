@@ -87,4 +87,86 @@ int StreamEx::read() {
   }
 }
 
+void StreamEx::cursor_to(uint8_t row, uint8_t col) {
+  stream_.write("\e[");
+  stream_.print(row);
+  stream_.write(';');
+  stream_.print(col);
+  stream_.write('H');
+}
+
+void StreamEx::cursor_up(uint8_t spaces) {
+  stream_.write("\e[");
+  if (spaces != 1) {
+    stream_.print(spaces);
+  }
+  stream_.write('A');
+}
+
+void StreamEx::cursor_down(uint8_t spaces) {
+  stream_.write("\e[");
+  if (spaces != 1) {
+    stream_.print(spaces);
+  }
+  stream_.write('B');
+}
+
+void StreamEx::cursor_right(uint8_t spaces) {
+  stream_.write("\e[");
+  if (spaces != 1) {
+    stream_.print(spaces);
+  }
+  stream_.write('C');
+}
+
+void StreamEx::cursor_left(uint8_t spaces) {
+  stream_.write("\e[");
+  if (spaces != 1) {
+    stream_.print(spaces);
+  }
+  stream_.write('D');
+}
+
+void StreamEx::hide_cursor() {
+  stream_.write("\e[?25l");
+}
+
+void StreamEx::show_cursor() {
+  stream_.write("\e[?25h");
+}
+
+void StreamEx::clear_screen() {
+  stream_.write("\e[2J");
+}
+
+void StreamEx::insert_char(uint8_t count) {
+  stream_.write("\e[");
+  if (count != 1) {
+    stream_.print(count);
+  }
+  stream_.write('@');
+}
+
+void StreamEx::delete_char(uint8_t count) {
+  stream_.write("\e[");
+  if (count != 1) {
+    stream_.print(count);
+  }
+  stream_.write('P');
+}
+
+void StreamEx::erase_char(uint8_t count) {
+  stream_.write("\e[");
+  if (count != 1) {
+    stream_.print(count);
+  }
+  stream_.write('X');
+}
+
+void StreamEx::set_style(Style style) {
+  stream_.write("\e[");
+  stream_.print(style);
+  stream_.write('m');
+}
+
 } // namespace uANSI

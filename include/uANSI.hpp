@@ -72,98 +72,25 @@ public:
   using Print::write;
 
   // Move the cursor to (`row`, `col`)
-  void cursor_to(uint8_t row, uint8_t col) {
-    stream_.write("\e[");
-    stream_.print(row);
-    stream_.write(';');
-    stream_.print(col);
-    stream_.write('H');
-  }
+  void cursor_to(uint8_t row, uint8_t col);
 
-  // Move the cursor up, optionally by multiple `spaces`
-  void cursor_up(uint8_t spaces = 1) {
-    stream_.write("\e[");
-    if (spaces != 1) {
-      stream_.print(spaces);
-    }
-    stream_.write('A');
-  }
+  void cursor_up(uint8_t spaces = 1); //< Move the cursor up, optionally by multiple `spaces`
+  void cursor_down(uint8_t spaces = 1); //< Move the cursor down, optionally by multiple `spaces`
+  void cursor_right(uint8_t spaces = 1); //< Move the cursor right, optionally by multiple `spaces`
+  void cursor_left(uint8_t spaces = 1); //< Move the cursor left, optionally by multiple `spaces`
 
-  // Move the cursor down, optionally by multiple `spaces`
-  void cursor_down(uint8_t spaces = 1) {
-    stream_.write("\e[");
-    if (spaces != 1) {
-      stream_.print(spaces);
-    }
-    stream_.write('B');
-  }
-
-  // Move the cursor right, optionally by multiple `spaces`
-  void cursor_right(uint8_t spaces = 1) {
-    stream_.write("\e[");
-    if (spaces != 1) {
-      stream_.print(spaces);
-    }
-    stream_.write('C');
-  }
-
-  // Move the cursor left, optionally by multiple `spaces`
-  void cursor_left(uint8_t spaces = 1) {
-    stream_.write("\e[");
-    if (spaces != 1) {
-      stream_.print(spaces);
-    }
-    stream_.write('D');
-  }
-
-  // Hide the cursor
-  void hide_cursor() {
-    stream_.write("\e[?25l");
-  }
-
-  // Show the cursor
-  void show_cursor() {
-    stream_.write("\e[?25h");
-  }
+  void hide_cursor(); //< Hide the cursor
+  void show_cursor(); //< Show the cursor
 
   // Erase all text and formatting
-  void clear_screen() {
-    stream_.write("\e[2J");
-  }
+  void clear_screen();
 
-  // Insert `count` chars at the cursor, shifting the rest of the line right
-  void insert_char(uint8_t count = 1) {
-    stream_.write("\e[");
-    if (count != 1) {
-      stream_.print(count);
-    }
-    stream_.write('@');
-  }
-
-  // Delete `count` chars at the cursor, shifting the rest of the line left
-  void delete_char(uint8_t count = 1) {
-    stream_.write("\e[");
-    if (count != 1) {
-      stream_.print(count);
-    }
-    stream_.write('P');
-  }
-
-  // Blank out `count` chars at the cursor without shifting the line
-  void erase_char(uint8_t count = 1) {
-    stream_.write("\e[");
-    if (count != 1) {
-      stream_.print(count);
-    }
-    stream_.write('X');
-  }
+  void insert_char(uint8_t count = 1); //< Insert at cursor, shifting the rest of the line right
+  void delete_char(uint8_t count = 1); //< Delete at cursor, shifting the rest of the line left
+  void erase_char(uint8_t count = 1); //< Erase at cursor without shifting the rest of the line
 
   // Set the text style
-  void set_style(Style style) {
-    stream_.write("\e[");
-    stream_.print(style);
-    stream_.write('m');
-  }
+  void set_style(Style style);
 
   // Set the text color
   void set_foreground(Color color) {
