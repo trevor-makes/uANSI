@@ -33,7 +33,7 @@ enum Color {
   COLOR_DEFAULT = 9,
 };
 
-// Special key codes returned by `read_key`
+// Special key codes returned by `StreamEx::read`
 enum Key {
   KEY_UP    = 0x100,
   KEY_DOWN  = 0x101,
@@ -70,62 +70,54 @@ public:
 
   // Expose non-virtual methods from Print, as done by HardwareSerial
   using Print::write;
+
+  // Move the cursor to row, col
+  void move_cursor(uint8_t row, uint8_t col) {
+    stream_.write("\e[");
+    stream_.print(row);
+    stream_.write(';');
+    stream_.print(col);
+    stream_.write('H');
+  }
+
+  // Hide the cursor
+  void hide_cursor() {
+    stream_.write("\e[?25l");
+  }
+
+  // Show the cursor
+  void show_cursor() {
+    stream_.write("\e[?25h");
+  }
+
+  // Erase all text and formatting
+  void clear_screen() {
+    stream_.write("\e[2J");
+  }
+
+  // Erase N characters following the cursor
+  void erase_characters(uint8_t num) {
+    stream_.write("\e[");
+    stream_.print(num);
+    stream_.write('X');
+  }
+
+  // Set the text style
+  void set_style(Style style) {
+    stream_.write("\e[");
+    stream_.print(style);
+    stream_.write('m');
+  }
+
+  // Set the text color
+  void set_foreground(Color color) {
+    set_style(Style(30 + color));
+  }
+
+  // Set the background color
+  void set_background(Color color) {
+    set_style(Style(40 + color));
+  }
 };
-
-// Move the cursor to row, col
-template <typename T>
-void move_cursor(T& stream, uint8_t row, uint8_t col) {
-  stream.write("\e[");
-  stream.print(row);
-  stream.write(';');
-  stream.print(col);
-  stream.write('H');
-}
-
-// Hide the cursor
-template <typename T>
-void hide_cursor(T& stream) {
-  stream.write("\e[?25l");
-}
-
-// Show the cursor
-template <typename T>
-void show_cursor(T& stream) {
-  stream.write("\e[?25h");
-}
-
-// Erase all text and formatting
-template <typename T>
-void clear_screen(T& stream) {
-  stream.write("\e[2J");
-}
-
-// Erase N characters following the cursor
-template <typename T>
-void erase_characters(T& stream, uint8_t num) {
-  stream.write("\e[");
-  stream.print(num);
-  stream.write('X');
-}
-
-// Set the text style
-template <typename T>
-void set_style(T& stream, Style style) {
-  stream.write("\e[");
-  stream.print(style);
-  stream.write('m');
-}
-
-// Set the text color
-template <typename T>
-void set_foreground(T& stream, Color color) {
-  set_style(stream, 30 + color);
-}
-
-// Set the background color
-template <typename T>
-void set_background(T& stream, Color color) {
-  set_style(stream, 40 + color);
-}
 
 } // namespace uANSI
