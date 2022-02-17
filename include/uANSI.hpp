@@ -71,13 +71,49 @@ public:
   // Expose non-virtual methods from Print, as done by HardwareSerial
   using Print::write;
 
-  // Move the cursor to row, col
-  void move_cursor(uint8_t row, uint8_t col) {
+  // Move the cursor to (`row`, `col`)
+  void cursor_to(uint8_t row, uint8_t col) {
     stream_.write("\e[");
     stream_.print(row);
     stream_.write(';');
     stream_.print(col);
     stream_.write('H');
+  }
+
+  // Move the cursor up, optionally by multiple `spaces`
+  void cursor_up(uint8_t spaces = 1) {
+    stream_.write("\e[");
+    if (spaces != 1) {
+      stream_.print(spaces);
+    }
+    stream_.write('A');
+  }
+
+  // Move the cursor down, optionally by multiple `spaces`
+  void cursor_down(uint8_t spaces = 1) {
+    stream_.write("\e[");
+    if (spaces != 1) {
+      stream_.print(spaces);
+    }
+    stream_.write('B');
+  }
+
+  // Move the cursor right, optionally by multiple `spaces`
+  void cursor_right(uint8_t spaces = 1) {
+    stream_.write("\e[");
+    if (spaces != 1) {
+      stream_.print(spaces);
+    }
+    stream_.write('C');
+  }
+
+  // Move the cursor left, optionally by multiple `spaces`
+  void cursor_left(uint8_t spaces = 1) {
+    stream_.write("\e[");
+    if (spaces != 1) {
+      stream_.print(spaces);
+    }
+    stream_.write('D');
   }
 
   // Hide the cursor
@@ -95,10 +131,30 @@ public:
     stream_.write("\e[2J");
   }
 
-  // Erase N characters following the cursor
-  void erase_characters(uint8_t num) {
+  // Insert `count` chars at the cursor, shifting the rest of the line right
+  void insert_char(uint8_t count = 1) {
     stream_.write("\e[");
-    stream_.print(num);
+    if (count != 1) {
+      stream_.print(count);
+    }
+    stream_.write('@');
+  }
+
+  // Delete `count` chars at the cursor, shifting the rest of the line left
+  void delete_char(uint8_t count = 1) {
+    stream_.write("\e[");
+    if (count != 1) {
+      stream_.print(count);
+    }
+    stream_.write('P');
+  }
+
+  // Blank out `count` chars at the cursor without shifting the line
+  void erase_char(uint8_t count = 1) {
+    stream_.write("\e[");
+    if (count != 1) {
+      stream_.print(count);
+    }
     stream_.write('X');
   }
 
