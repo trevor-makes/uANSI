@@ -33,12 +33,14 @@ enum Color {
   COLOR_DEFAULT = 9,
 };
 
-// Special key codes returned by `StreamEx::read`
+// Extended key codes returned by `StreamEx::read`
 enum Key {
   KEY_UP    = 0x100,
   KEY_DOWN  = 0x101,
   KEY_RIGHT = 0x102,
   KEY_LEFT  = 0x103,
+  KEY_END   = 0x104,
+  KEY_HOME  = 0x105,
 };
 
 class StreamEx : public Stream {
@@ -48,6 +50,7 @@ class StreamEx : public Stream {
     RESET,
     ESCAPE, // preceding input was "\e"
     CSI, // preceding input was "\e["
+    EMIT_CSI, // spit out unhandled CSI
     CR, // preceding input was "\r"
   } state_ = State::RESET;
 

@@ -45,22 +45,41 @@ int StreamEx::read() {
         return '\e';
       }
     case State::CSI:
-      stream_.read();
-      state_ = State::RESET;
+      // Handle some common CSI input sequences
       switch (input) {
       case 'A':
+        stream_.read();
+        state_ = State::RESET;
         return KEY_UP;
       case 'B':
+        stream_.read();
+        state_ = State::RESET;
         return KEY_DOWN;
       case 'C':
+        stream_.read();
+        state_ = State::RESET;
         return KEY_RIGHT;
       case 'D':
+        stream_.read();
+        state_ = State::RESET;
         return KEY_LEFT;
+      case 'F':
+        stream_.read();
+        state_ = State::RESET;
+        return KEY_END;
+      case 'H':
+        stream_.read();
+        state_ = State::RESET;
+        return KEY_HOME;
       default:
-        // Discard other input sequences... for now
-        // TODO handle other sequences and modifier keys; some are more than one char!
-        continue;
+        // If we didn't recognize the sequence, emit the CSI as-is
+        state_ = State::EMIT_CSI;
+        return '\e';
       }
+    case State::EMIT_CSI:
+      // Continue emitting the unhandled CSI
+      state_ = State::RESET;
+      return '[';
     case State::CR:
       if (input == '\n') {
         // Discard LF following CR
