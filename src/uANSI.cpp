@@ -115,35 +115,43 @@ void StreamEx::cursor_to(uint8_t row, uint8_t col) {
 }
 
 void StreamEx::cursor_up(uint8_t spaces) {
-  stream_.write("\e[");
-  if (spaces != 1) {
-    stream_.print(spaces);
+  if (spaces > 0) {
+    stream_.write("\e[");
+    if (spaces > 1) {
+      stream_.print(spaces);
+    }
+    stream_.write('A');
   }
-  stream_.write('A');
 }
 
 void StreamEx::cursor_down(uint8_t spaces) {
-  stream_.write("\e[");
-  if (spaces != 1) {
-    stream_.print(spaces);
+  if (spaces > 0) {
+    stream_.write("\e[");
+    if (spaces > 1) {
+      stream_.print(spaces);
+    }
+    stream_.write('B');
   }
-  stream_.write('B');
 }
 
 void StreamEx::cursor_right(uint8_t spaces) {
-  stream_.write("\e[");
-  if (spaces != 1) {
-    stream_.print(spaces);
+  if (spaces > 0) {
+    stream_.write("\e[");
+    if (spaces > 1) {
+      stream_.print(spaces);
+    }
+    stream_.write('C');
   }
-  stream_.write('C');
 }
 
 void StreamEx::cursor_left(uint8_t spaces) {
-  stream_.write("\e[");
-  if (spaces != 1) {
-    stream_.print(spaces);
+  if (spaces > 0) {
+    stream_.write("\e[");
+    if (spaces > 1) {
+      stream_.print(spaces);
+    }
+    stream_.write('D');
   }
-  stream_.write('D');
 }
 
 void StreamEx::hide_cursor() {
@@ -159,27 +167,33 @@ void StreamEx::clear_screen() {
 }
 
 void StreamEx::insert_char(uint8_t count) {
-  stream_.write("\e[");
-  if (count != 1) {
-    stream_.print(count);
+  if (count > 0) {
+    stream_.write("\e[");
+    if (count > 1) {
+      stream_.print(count);
+    }
+    stream_.write('@');
   }
-  stream_.write('@');
 }
 
 void StreamEx::delete_char(uint8_t count) {
-  stream_.write("\e[");
-  if (count != 1) {
-    stream_.print(count);
+  if (count > 0) {
+    stream_.write("\e[");
+    if (count > 1) {
+      stream_.print(count);
+    }
+    stream_.write('P');
   }
-  stream_.write('P');
 }
 
 void StreamEx::erase_char(uint8_t count) {
-  stream_.write("\e[");
-  if (count != 1) {
-    stream_.print(count);
+  if (count > 0) {
+    stream_.write("\e[");
+    if (count > 1) {
+      stream_.print(count);
+    }
+    stream_.write('X');
   }
-  stream_.write('X');
 }
 
 void StreamEx::set_style(Style style) {
