@@ -74,29 +74,6 @@ public:
   // Expose non-virtual methods from Print, as done by HardwareSerial
   using Print::write;
 
-  // Print single hex digit (or garbage if n > 15)
-  void print_hex4(uint8_t n) {
-    stream_.write(n < 10 ? '0' + n : 'A' - 10 + n);
-  }
-
-  // Print 2 hex digits with leading zeroes
-  void print_hex8(uint8_t n) {
-    print_hex4(n >> 4);
-    print_hex4(n & 0xF);
-  }
-
-  // Print 4 hex digits with leading zeroes
-  void print_hex16(uint16_t n) {
-    print_hex8(n >> 8);
-    print_hex8(n & 0xFF);
-  }
-
-  // Print 8 hex digits with leading zeroes
-  void print_hex32(uint32_t n) {
-    print_hex16(n >> 16);
-    print_hex16(n & 0xFFFF);
-  }
-
   // Move the cursor to (`row`, `col`)
   void cursor_to(uint8_t row, uint8_t col);
 
