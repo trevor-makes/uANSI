@@ -3,10 +3,10 @@
 
 #pragma once
 
-#ifdef AVR
-#include <Stream.h>
-#else
+#ifdef ENV_NATIVE
 #include "FakeStream.hpp"
+#else
+#include <Stream.h>
 #endif
 
 #include <stdint.h>
