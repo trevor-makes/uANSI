@@ -3,8 +3,6 @@
 
 #include "uANSI.hpp"
 
-#include <Arduino.h>
-
 namespace uANSI {
 
 int StreamEx::peek() {

@@ -3,7 +3,11 @@
 
 #pragma once
 
+#ifdef AVR
 #include <Stream.h>
+#else
+#include "FakeStream.hpp"
+#endif
 
 #include <stdint.h>
 
