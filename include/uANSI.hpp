@@ -78,8 +78,11 @@ public:
   // Expose non-virtual methods from Print, as done by HardwareSerial
   using Print::write;
 
+  void get_cursor(uint8_t& row, uint8_t& col); //< Get the current cursor position
+  void get_size(uint8_t& row, uint8_t& col); //< Get the bottom-right-most position
+
   // Move the cursor to (`row`, `col`)
-  void cursor_to(uint8_t row, uint8_t col);
+  void set_cursor(uint8_t row, uint8_t col);
 
   void cursor_up(uint8_t spaces = 1); //< Move the cursor up, optionally by multiple `spaces`
   void cursor_down(uint8_t spaces = 1); //< Move the cursor down, optionally by multiple `spaces`

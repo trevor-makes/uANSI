@@ -104,7 +104,46 @@ int StreamEx::read() {
   }
 }
 
-void StreamEx::cursor_to(uint8_t row, uint8_t col) {
+void StreamEx::get_cursor(uint8_t& row, uint8_t& col) {
+  // Send status request sequence
+  stream_.write("\e[6n");
+  // Device should respond "\e[{row};{col}R"
+  // NOTE some terminals send "\e[1;{mods}R" when the F3 key is pressed
+  // TODO this naive approach requires the input to be drained beforehand and will hang if the response isn't received (don't try with Arduino serial monitor!)
+  // TODO should the response be async (handled by read() state machine)?
+  // TODO can we peek directly into the input buffer for the response? Inject a callback into the Arduino stream code?
+  uint8_t row_tmp = 0, col_tmp = 0;
+  while (read() != '\e') {}
+  while (read() != '[') {}
+  for (;;) {
+    while (peek() == -1) {}
+    if (!isdigit(peek())) break;
+    row_tmp = 10 * row_tmp + read() - '0';
+  }
+  while (read() != ';') {}
+  for (;;) {
+    while (peek() == -1) {}
+    if (!isdigit(peek())) break;
+    col_tmp = 10 * col_tmp + read() - '0';
+  }
+  while (read() != 'R') {}
+  row = row_tmp;
+  col = col_tmp;
+}
+
+void StreamEx::get_size(uint8_t& row, uint8_t& col) {
+  // Get current position
+  // TODO use save/restore cursor command instead?
+  uint8_t cur_row, cur_col;
+  get_cursor(cur_row, cur_col);
+  // Move to bottom right and get new position
+  set_cursor(255, 255);
+  get_cursor(row, col);
+  // Return to starting position
+  set_cursor(cur_row, cur_col);
+}
+
+void StreamEx::set_cursor(uint8_t row, uint8_t col) {
   stream_.write("\e[");
   stream_.print(row);
   stream_.write(';');
