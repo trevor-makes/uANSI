@@ -104,6 +104,17 @@ int StreamEx::read() {
   }
 }
 
+void StreamEx::save_cursor() {
+  // NOTE ESC 7 appears to be more supported than the similar CSI s
+  stream_.write("\e7");
+}
+
+void StreamEx::restore_cursor() {
+  // NOTE this will reset cursor to default state if save_cursor was not called prior
+  // NOTE ESC 8 appears to be more supported than the similar CSI u
+  stream_.write("\e8");
+}
+
 void StreamEx::get_cursor(uint8_t& row, uint8_t& col) {
   // Send status request sequence
   stream_.write("\e[6n");
@@ -132,15 +143,13 @@ void StreamEx::get_cursor(uint8_t& row, uint8_t& col) {
 }
 
 void StreamEx::get_size(uint8_t& row, uint8_t& col) {
-  // Get current position
-  // TODO use save/restore cursor command instead?
-  uint8_t cur_row, cur_col;
-  get_cursor(cur_row, cur_col);
+  // Save current position
+  save_cursor();
   // Move to bottom right and get new position
   set_cursor(255, 255);
   get_cursor(row, col);
   // Return to starting position
-  set_cursor(cur_row, cur_col);
+  restore_cursor();
 }
 
 void StreamEx::set_cursor(uint8_t row, uint8_t col) {

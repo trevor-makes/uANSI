@@ -78,6 +78,9 @@ public:
   // Expose non-virtual methods from Print, as done by HardwareSerial
   using Print::write;
 
+  void save_cursor();
+  void restore_cursor();
+
   void get_cursor(uint8_t& row, uint8_t& col); //< Get the current cursor position
   void get_size(uint8_t& row, uint8_t& col); //< Get the bottom-right-most position
 
