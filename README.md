@@ -1,5 +1,7 @@
 # uANSI
 
+**Deprecated! Merged into [core](https://github.com/trevor-makes/core)**
+
 uANSI is a minimal library for changing the color and formatting of text sent to a compatible terminal emulator (such as xterm or PuTTY) using ANSI control sequences, similar to the Unix curses library. uANSI also supports parsing multi-character input sequences for special keys which do not map to ASCII characters, such as arrow keys.
 
 uANSI is designed for Arduino and supports serial connections that implement the Stream interface, like Serial, SoftwareSerial, and SerialUSB. This package is intended to be used with [PlatformIO](https://platformio.org/), but the source files can be manually copied into a project when using the Arduino IDE.
